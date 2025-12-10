@@ -1,0 +1,40 @@
+const leaderboard = {
+  "24h": [
+    { handle: "yashuweb3", rank: 1, points: 800 },
+    { handle: "0x_madara_", rank: 2, points: 760 }
+  ],
+  "7d": [
+    { handle: "yashuweb3", rank: 1, points: 4200 },
+    { handle: "cryptoking", rank: 2, points: 3900 }
+  ],
+  "30d": [
+    { handle: "yashuweb3", rank: 1, points: 15000 },
+    { handle: "zama_alpha", rank: 2, points: 14000 }
+  ]
+};
+
+function findRank(list, user) {
+  return list.find(
+    (entry) => entry.handle.toLowerCase() === user.toLowerCase()
+  );
+}
+
+function checkRank() {
+  const h = document.getElementById("handle").value.replace("@", "").trim();
+  if (!h) return alert("Bhai handle daal 😭");
+
+  const result24 = findRank(leaderboard["24h"], h);
+  const result7 = findRank(leaderboard["7d"], h);
+  const result30 = findRank(leaderboard["30d"], h);
+
+  const html = `
+  <div class="result">
+    <h3>@${h}</h3>
+    <p>24h ➝ ${result24 ? "#" + result24.rank : "Unranked"}</p>
+    <p>7d ➝ ${result7 ? "#" + result7.rank : "Unranked"}</p>
+    <p>30d ➝ ${result30 ? "#" + result30.rank : "Unranked"}</p>
+  </div>
+  `;
+
+  document.getElementById("result").innerHTML = html;
+}
