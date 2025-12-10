@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ZAMA Rank Checker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        background: #facc15;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        font-family: sans-serif;
+      }
+      .box {
+        background: black;
+        color: #facc15;
+        padding: 20px;
+        border-radius: 20px;
+        width: 90%;
+        max-width: 400px;
+      }
+      input {
+        width: 70%;
+        padding: 8px;
+        border-radius: 8px;
+        border: none;
+      }
+      button {
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: none;
+        background: #facc15;
+        color: black;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      .result {
+        background: #facc15;
+        color: black;
+        padding: 12px;
+        border-radius: 12px;
+        margin-top: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <h2 style="text-align:center">ZAMA Rank Checker</h2>
+      <p style="text-align:center;font-size:13px">ZAMA Grind Never Stops</p>
+      <p style="text-align:center;font-size:11px">Powered by @YashuWeb3</p>
+
+      <div>
+        <input id="handle" placeholder="@yourhandle" />
+        <button onclick="checkRank()">Check</button>
+      </div>
+
+      <div id="result"></div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
