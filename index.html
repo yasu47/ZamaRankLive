@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>ZAMA Rank Checker</title>
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ZAMA Rank Checker</title>
     <style>
       body {
         background: #facc15;
@@ -10,55 +11,104 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
-        font-family: sans-serif;
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
       }
       .box {
-        background: black;
+        background: #000;
         color: #facc15;
-        padding: 20px;
-        border-radius: 20px;
-        width: 90%;
-        max-width: 400px;
+        padding: 22px;
+        border-radius: 16px;
+        width: 94%;
+        max-width: 520px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
       }
-      input {
-        width: 70%;
-        padding: 8px;
-        border-radius: 8px;
-        border: none;
+      h1 { margin:0 0 6px; font-size:20px; text-align:center }
+      p.small { margin:0 0 12px; text-align:center; font-size:12px; color:#ffd966 }
+      .row { display:flex; gap:8px; align-items:center }
+      input[type="text"] {
+        flex:1; padding:10px; border-radius:10px; border:0; outline:0; font-size:14px;
       }
-      button {
-        padding: 8px 12px;
-        border-radius: 8px;
-        border: none;
-        background: #facc15;
-        color: black;
-        font-weight: bold;
-        cursor: pointer;
-      }
-      .result {
-        background: #facc15;
-        color: black;
-        padding: 12px;
-        border-radius: 12px;
-        margin-top: 15px;
-      }
+      button { padding:10px 14px; border-radius:10px; border:0; background:#facc15; color:#000; font-weight:700; cursor:pointer; }
+      .res { margin-top:14px; background:#facc15; color:#000; padding:12px; border-radius:10px; }
+      .muted { color:#222; font-size:13px; }
+      .note { margin-top:10px; font-size:12px; color:#ffd966; text-align:center }
     </style>
   </head>
   <body>
     <div class="box">
-      <h2 style="text-align:center">ZAMA Rank Checker</h2>
-      <p style="text-align:center;font-size:13px">ZAMA Grind Never Stops</p>
-      <p style="text-align:center;font-size:11px">Powered by @YashuWeb3</p>
+      <h1>ZAMA Rank Checker</h1>
+      <p class="small">ZAMA Grind Never Stops — Powered by @YashuWeb3</p>
 
-      <div>
-        <input id="handle" placeholder="@yourhandle" />
-        <button onclick="checkRank()">Check</button>
+      <div class="row">
+        <input id="handle" type="text" placeholder="@yourhandle (example: yashuweb3)" />
+        <button id="checkBtn">Check</button>
       </div>
 
-      <div id="result"></div>
+      <div id="resultArea" aria-live="polite"></div>
+
+      <p class="note">If nothing shows, try removing @ or typing lowercase. Example: <strong>yashuweb3</strong></p>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+      // Inline leaderboard data — edit as needed
+      const leaderboard = {
+        "24h": [
+          { handle: "yashuweb3", rank: 1, points: 800 },
+          { handle: "0x_madara_", rank: 2, points: 760 },
+          { handle: "cryptosheru", rank: 3, points: 700 }
+        ],
+        "7d": [
+          { handle: "yashuweb3", rank: 1, points: 4200 },
+          { handle: "cryptoking", rank: 2, points: 3900 }
+        ],
+        "30d": [
+          { handle: "yashuweb3", rank: 1, points: 15000 },
+          { handle: "zama_alpha", rank: 2, points: 14000 }
+        ]
+      };
+
+      function findRank(list, user) {
+        if (!list || !user) return null;
+        return list.find(e => e.handle.toLowerCase() === user.toLowerCase());
+      }
+
+      function renderResult(h, r24, r7, r30) {
+        const area = document.getElementById('resultArea');
+        if (!r24 && !r7 && !r30) {
+          area.innerHTML = '<div class="res muted">@' + h + ' — Unranked (no data)</div>';
+          return;
+        }
+        area.innerHTML = `
+          <div class="res">
+            <div style="font-weight:700;margin-bottom:6px">@${h}</div>
+            <div style="display:flex;justify-content:space-between"><span>24h</span><span>${r24 ? '#' + r24.rank + ' (' + r24.points + ' pts)' : 'Unranked'}</span></div>
+            <div style="display:flex;justify-content:space-between"><span>7d</span><span>${r7 ? '#' + r7.rank + ' (' + r7.points + ' pts)' : 'Unranked'}</span></div>
+            <div style="display:flex;justify-content:space-between"><span>30d</span><span>${r30 ? '#' + r30.rank + ' (' + r30.points + ' pts)' : 'Unranked'}</span></div>
+          </div>
+        `;
+      }
+
+      document.getElementById('checkBtn').addEventListener('click', () => {
+        const raw = document.getElementById('handle').value || '';
+        const clean = raw.replace(/^@/,'').trim();
+        if (!clean) {
+          alert('Bhai handle daal 😭');
+          return;
+        }
+        const r24 = findRank(leaderboard['24h'], clean);
+        const r7  = findRank(leaderboard['7d'], clean);
+        const r30 = findRank(leaderboard['30d'], clean);
+        renderResult(clean, r24, r7, r30);
+      });
+
+      // also allow Enter key
+      document.getElementById('handle').addEventListener('keydown', function(e){
+        if (e.key === 'Enter') document.getElementById('checkBtn').click();
+      });
+
+      // debug helper (uncomment to auto-open console in dev)
+      // console.log('Zama index loaded, leaderboard sample size:', leaderboard['24h'].length);
+    </script>
   </body>
 </html>
